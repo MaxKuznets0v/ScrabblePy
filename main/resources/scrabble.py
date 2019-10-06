@@ -28,7 +28,7 @@ class Scrabble:
                         self.board[i].append(Cell(letter='2l', mod='2l'))
                     else:
                         self.board[i].append(Cell())
-                elif i == j + 3 or i == 10 - j:
+                elif i == j + 4 or i == 10 - j:
                     if j == 1 or j == 9:
                         self.board[i].append(Cell(letter='3l', mod='3l'))
                     elif 1 < j < 4 or j == 8:
