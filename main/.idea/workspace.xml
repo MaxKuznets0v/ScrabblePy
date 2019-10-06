@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8928c687-418e-4288-a8e4-9e2a4e7cd6ab" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/resources/word_rus.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/cell.py" beforeDir="false" afterPath="$PROJECT_DIR$/resources/cell.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/scrabble.py" beforeDir="false" afterPath="$PROJECT_DIR$/resources/scrabble.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,7 +36,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="C:/Git/bin/git.exe" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="File.Encoding" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
