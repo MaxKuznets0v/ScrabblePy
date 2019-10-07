@@ -1,4 +1,4 @@
-from resources.scrabble import Scrabble
+#from resources.scrabble import Scrabble
 
 
 class Player:

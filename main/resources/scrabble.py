@@ -81,7 +81,7 @@ class Scrabble:
         let = list()
         for i in range(7):
             while True:  # не даем взять больше букв, чем имеем
-                cur_letter = random.choice(self.let_to_price.keys())
+                cur_letter = random.choice(list(self.let_to_price.keys()))
                 if self._let_to_amount[cur_letter] > 0:
                     break
                 else:
