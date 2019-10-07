@@ -5,3 +5,4 @@ from resources.scrabble import Scrabble
 
 game = Scrabble()
 game.print_board()
+print(game.board[10][10].type)

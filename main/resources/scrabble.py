@@ -114,6 +114,37 @@ class Scrabble:
     def check_word(self, word):  # проверяет слово на корректность (в противном случае бросается исключение)
         if word not in self._dict:
             raise ValueError("Слова " + word + " нет в словаре!")
+            #return False
+        #return True
 
-    def set_word(self):  # вставляет слово вызывает (вызывает функцию проверки и тд) и возвращает стоимость слова
-        pass
+    def set_word(self, inp):  # вставляет слово вызывает (вызывает функцию проверки и тд) и возвращает стоимость слова
+    # inp - строка, поданная на вход из консоли в формате "word x y u/h", где x и y - координаты начала слова, а u/h - способ выкладки слово(вертикально или горизонтально)
+        if self.check_word(inp):
+            word = inp.split()
+            word[1] = int(word[1])
+            word[2] = int(word[2])
+            count = 0
+            modifier = 1
+            if word[3] == 'u':
+                for i in range(len(word[0])):
+                    self.board[word[2]][word[1] - i].set_letter(word[0][i])
+                    if self.board[word[2]][word[1] - i].mod_type == 'letter':
+                        count += self.let_to_price[word[0][i]] * self.board[word[2]][word[1] - i].modifier
+                        self.board[word[2]][word[1] - i].mod_type = None
+                    elif self.board[word[2]][word[1] - i].mod_type == 'word':
+                        modifier *= self.board[word[2]][word[1] - i].modifier
+                        self.board[word[2]][word[1] - i].mod_type = None
+                return count * modifier
+            elif word[3] == 'h':
+                for i in range(len(word[0])):
+                    self.board[word[2] + i][word[1]].cur_letter = word[0][i]
+                    if self.board[word[2] + i][word[1]].mod_type == 'letter':
+                        count += self.let_to_price[word[0][i]] * self.board[word[2] + i][word[1]].modifier
+                        self.board[word[2] + i][word[1]].mod_type = None
+                    if self.board[word[2] + i][word[1]].mod_type == 'word':
+                        modifier *= self.board[word[2] + i][word[1]].modifier
+                        self.board[word[2] + i][word[1]].mod_type = None
+                return count * modifier
+        else:
+            temp = input("Попробуйте еще раз: ")
+            self.set_word(temp)
