@@ -7,6 +7,8 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+main/.idea/
+main/.idea
 .idea
 .idea/
 .idea/*
