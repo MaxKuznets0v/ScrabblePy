@@ -5,4 +5,4 @@ from resources.scrabble import Scrabble
 
 game = Scrabble()
 game.print_board()
-print(game.board[10][10].mod_type)
+game.set_word('звон 8 З u')
