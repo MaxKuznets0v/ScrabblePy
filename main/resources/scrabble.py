@@ -78,8 +78,7 @@ class Scrabble:
                 cur_letter = random.choice(list(self._let_to_amount.keys()))
                 if self._let_to_amount[cur_letter] > 0:
                     break
-                else:
-                    continue
+                continue
             self._let_to_amount[cur_letter] -= 1
             let.append(cur_letter)
         return let
@@ -115,7 +114,7 @@ class Scrabble:
     def get_hint(self):  # подсказка для игрока куда ставить букву (можно реализовать подсвечивание
         pass  # или вставку буквы или слова на нужное место сразу)
 
-    def check_word(self, inp):
+    def check_word(self, inp):  # TODO: параллельный ввод
         # проверяет на формат: (слово, x, буква, способ выкладки) пример: "сосна 11 О u" иначе бросить исключение
         # TypeError само слово на корректность (есть ли слово в словаре, не выезжает ли оно за границы,
         # есть ли нужные буквы для этого слова у пользователя, пересекает ли оно необходимые буквы и тд,
@@ -186,6 +185,7 @@ class Scrabble:
             if way == 'u':
                 index = x
                 for letter in word:
+                    self.player_list[self.turn].letters.remove(letter)
                     cell = self.board[index][y]
                     if cell.mod_type == 'word':
                         modifier *= cell.modifier
@@ -195,6 +195,7 @@ class Scrabble:
             else:
                 index = y
                 for letter in word:
+                    self.player_list[self.turn].letters.remove(letter)
                     cell = self.board[x][index]
                     if cell.mod_type == 'word':
                         modifier *= cell.modifier
