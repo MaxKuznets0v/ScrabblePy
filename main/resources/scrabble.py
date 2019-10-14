@@ -149,7 +149,7 @@ class Scrabble:
                 for i in range(len(word)):
                     letter = self.board[x + i][y].cur_letter
                     if letter != word[i] and letter != '*' and self.board[x + i][y].mod_type is None:
-                        raise ValueError("Невозможно вставить слово " + word)
+                        raise ValueError("Невозможно вставить слово " + word.upper())
             else:
                 raise ValueError("Слово " + word.upper() + " выходит за границы по вертикали")
         else:
@@ -157,7 +157,7 @@ class Scrabble:
                 for i in range(len(word)):
                     letter = self.board[x][y + i].cur_letter
                     if letter != word[i] and letter != '*' and self.board[x + i][y].mod_type is None:
-                        raise ValueError("Невозможно вставить слово " + word)
+                        raise ValueError("Невозможно вставить слово " + word.upper())
             else:
                 raise ValueError("Слово " + word.upper() + " выходит за границы по горизонтали")
 
