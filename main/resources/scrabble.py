@@ -46,8 +46,9 @@ class Scrabble:
 
     def _set_dict(self):
         """Получение словаря возможных слов"""
-        f = open("resources/word_rus.txt", encoding="utf-8")
-        self._dict = set(f.read().splitlines())
+        f = open("resources/erudit.txt", encoding="utf-8")
+        #self._dict = set(f.read().splitlines())
+        self._dict = set(f.read().split(','))
         f.close()
 
     def _set_tables(self):
@@ -62,7 +63,7 @@ class Scrabble:
                              'Ф': 10, 'Х': 5, 'Ц': 5,
                              'Ш': 8, 'Щ': 10, 'Ъ': 10,
                              'Ы': 4, 'Ь': 3, 'Э': 8,
-                             'Ю': 8, 'Я': 3}
+                             'Ю': 8, 'Я': 3, ' ': 0}
 
         self._let_to_amount = {'А': 8, 'Б': 2, 'В': 4,
                                'Г': 2, 'Д': 4, 'Е': 8,
@@ -74,7 +75,7 @@ class Scrabble:
                                'Ф': 1, 'Х': 1, 'Ц': 1,
                                'Ш': 1, 'Щ': 1, 'Ъ': 1,
                                'Ы': 2, 'Ь': 2, 'Э': 1,
-                               'Ю': 1, 'Я': 2}
+                               'Ю': 1, 'Я': 2, ' ': 2}
 
     def _init_letters(self):
         """Выставляет буквы игроков при старте"""

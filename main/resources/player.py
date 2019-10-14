@@ -1,6 +1,3 @@
-#from resources.scrabble import Scrabble
-
-
 class Player:
     """Класс игрока с полями score, user_name и letters"""
 
