@@ -89,6 +89,11 @@ class Scrabble:
         name1 = input("Введите имя первого игрока: ")
         name2 = input("Введите имя второго игрока: ")
         self.player_list = [Player(0, name1, self._init_letters()), Player(0, name2, self._init_letters())]
+        self.turn = random.randint(0, len(self.player_list))  # текузий ход игрока turn - индекс игрока в списке
+
+    def _next_turn(self):
+        """Передает ход следующему игроку"""
+        self.turn = (self.turn + 1) % len(self.player_list)
 
     def __init__(self):  # TODO: выбор режима
         self._fill_board()
@@ -108,48 +113,99 @@ class Scrabble:
             print('\n')
 
     def get_hint(self):  # подсказка для игрока куда ставить букву (можно реализовать подсвечивание
-        pass             # или вставку буквы или слова на нужное место сразу)
+        pass  # или вставку буквы или слова на нужное место сразу)
 
-    def check_word(self, word):  # проверяет слово на корректность (в противном случае бросается исключение)
+    def check_word(self, inp):
+        # проверяет на формат: (слово, x, буква, способ выкладки) пример: "сосна 11 О u" иначе бросить исключение
+        # TypeError само слово на корректность (есть ли слово в словаре, не выезжает ли оно за границы,
+        # есть ли нужные буквы для этого слова у пользователя, пересекает ли оно необходимые буквы и тд,
+        # иначе бросаем ValueError
+        """Проверка ввода пользователя на корректность"""
+        #проверим, что на вход получили 4 значения
+        words = inp.split()
+        if len(words) != 4:
+            raise TypeError("Введено отличное от 4 количество слов(слово, x, буква, способ выкладки)")
+
+        # проверим что x и буква не выходят за пределы игрового поля
+        word, x, y, way = words
+        x = int(x)
+        y = ord(y.upper()) - 1039
+        if 1 > x or x > 15 and 1 > y or y > 15:
+            raise TypeError("Введенные координаты выходят за границу игрового поля(1-15, А-О)")
+
+        # проверим что последний параметр u/h
+        way = way.lower()
+        if way != 'h' and way != 'u':
+            raise TypeError("Выбрано неверное направление(u/h)")
+
+        # проверим, что слово есть в словаре
+        word = word.lower()
         if word not in self._dict:
-            raise ValueError("Слова " + word + " нет в словаре!")
-            #return False
-        #return True
+            raise ValueError("Слова " + word.upper() + " нет в словаре")
+
+        # проверим, что слово не выходит за край, если выполнено проверяем остальное
+        if way == 'u':
+            if x + len(word) - 1 <= 15:
+                for i in range(len(word)):
+                    letter = self.board[x + i][y].cur_letter
+                    if letter != word[i] and letter != '*' and self.board[x + i][y].mod_type is None:
+                        raise ValueError("Невозможно вставить слово " + word)
+            else:
+                raise ValueError("Слово " + word.upper() + " выходит за границы по вертикали")
+        else:
+            if y + len(word) - 1 <= 15:
+                for i in range(len(word)):
+                    letter = self.board[x][y + i].cur_letter
+                    if letter != word[i] and letter != '*' and self.board[x + i][y].mod_type is None:
+                        raise ValueError("Невозможно вставить слово " + word)
+            else:
+                raise ValueError("Слово " + word.upper() + " выходит за границы по горизонтали")
+
+        #проверим, что данные буквы есть у пользователя
+        if not self.player_list[self.turn].has_letters(list(word)):
+            raise ValueError("У " + self.player_list[self.turn].get_name() + " нет нужных букв")
 
     def set_word(self, inp):  # вставляет слово вызывает (вызывает функцию проверки и тд) и возвращает стоимость слова
-    # inp - строка, поданная на вход из консоли в формате "word x y u/h", где x и y - координаты начала слова, а u/h - способ выкладки слово(вертикально или горизонтально)
-        # посмотрел на доску у своей scrabble, там нумерация ячеек как в морском бое: цифры и буквы и
-        # начало координат в левом верхнем углу, предлагаю сделать так же
+        # inp - строка, поданная на вход из консоли в формате "word x y u/h", где x и y - координаты начала слова,
+        # а u/h - способ выкладки слово(вертикально или горизонтально) посмотрел на доску у своей scrabble,
+        # там нумерация ячеек как в морском бое: цифры и буквы и начало координат в левом верхнем углу,
+        # предлагаю сделать так же
+        """Помещает слово на игровое поле"""
+        # этот блок try-except можно вынести в верхний метод (из которого вызывается set_word)
+        # так если в этой функции произойдет исключение мы узнает, что что-то пошло не так
 
         try:
             self.check_word(inp)
-        except ValueError:
-            pass
+            word, x, let, way = inp.split()  # слово, координаты, способ выкладки
+            x = int(x)
+            let = let.upper()
+            y = ord(let) - 1039  # так как ord('A') = 1039
+            word = word.upper()
+            count = 0
+            modifier = 1
+            if way == 'u':
+                index = x
+                for letter in word:
+                    cell = self.board[index][y]
+                    if cell.mod_type == 'word':
+                        modifier *= cell.modifier
+                    count += cell.set_letter(letter)
+                    index += 1
 
-        word, x, let, way = inp.split() # слово, координаты, способ выкладки
-        x = int(x)
-        let = let.upper()
-        y = ord(let) - 1039  # так как ord('A') = 1039
-        word = word.upper()
-        count = 0
-        modifier = 1
-        if way == 'u':
-            index = x
-            for letter in word:
-                cell = self.board[index][y]
-                if cell.mod_type == 'word':
-                    modifier *= cell.modifier
-                count += cell.set_letter(letter)
-                index += 1
+            else:
+                index = y
+                for letter in word:
+                    cell = self.board[x][index]
+                    if cell.mod_type == 'word':
+                        modifier *= cell.modifier
+                    count += cell.set_letter(letter)
+                    index += 1
 
-        else:
-            index = y
-            for letter in word:
-                cell = self.board[x][index]
-                if cell.mod_type == 'word':
-                    modifier *= cell.modifier
-                count += cell.set_letter(letter)
-                index += 1
-
-        self.print_board()
-        return modifier * count
+            self.print_board()
+            return modifier * count
+        except TypeError as er:
+            print(er)
+        except ValueError as er:
+            print(er)
+        except Exception:
+            print("Что-то пошло не так")

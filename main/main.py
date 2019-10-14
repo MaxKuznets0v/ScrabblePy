@@ -5,4 +5,4 @@ from resources.scrabble import Scrabble
 
 game = Scrabble()
 game.print_board()
-game.set_word('звон 8 З u')
+game.set_word('звон 7 В u')

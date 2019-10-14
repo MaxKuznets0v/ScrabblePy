@@ -5,6 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/cell.py" beforeDir="false" afterPath="$PROJECT_DIR$/resources/cell.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/resources/player.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/scrabble.py" beforeDir="false" afterPath="$PROJECT_DIR$/resources/scrabble.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,12 +24,6 @@
   <component name="Git.Settings">
     <option name="ROOT_SYNC" value="DONT_SYNC" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="949" />
-    <option name="y" value="-11" />
-    <option name="width" value="983" />
-    <option name="height" value="1043" />
   </component>
   <component name="ProjectId" id="1RnVJR2CJjEY93MIX5CLR4Elq18" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />

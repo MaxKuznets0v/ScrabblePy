@@ -19,10 +19,12 @@ class Cell:
         self.mod_type = type_
 
     def make_none(self):
+        """Очищает модификатор ячейки"""
         self.modifier = 1
         self.mod_type = None
 
     def set_letter(self, letter):  # изменяет букву в ячейке и возвращает количество очков за эту букву
+        """Помещает букву в ячейку"""
         self.cur_letter = letter
         res = self.let_to_price[letter]
         if self.mod_type == "letter":
