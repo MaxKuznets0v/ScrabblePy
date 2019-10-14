@@ -10,8 +10,6 @@ __pycache__/
 .idea
 .idea/
 .idea/*
-main/.idea/
-main/.idea
 .Python
 build/
 develop-eggs/
