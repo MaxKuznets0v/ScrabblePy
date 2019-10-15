@@ -29,12 +29,32 @@ class Player:
 
     def has_letters(self, letters):
         """Проверяет, есть ли необходимые буквы у игрока"""
-        user_let = list(self.letters)  #копируем список букв
+        user_let = list(self.letters)  # копируем список букв
         given_let = list(letters)
-        for i in range(len(given_let)):
-            ch = given_let.pop().upper()
-            try:
+        has_empty = ' ' in user_let
+        length = len(given_let)  # запомним количество букв в изначальном слове
+        let_count = 0
+        for i in range(length):
+            ch = given_let.pop()
+            if ch in user_let:
                 user_let.remove(ch)
-            except ValueError:
+                let_count += 1  # выкидываем по одной из скопированных букв пользователя и увеличиваем счетчик
+            else:
+                needed_letter = ch  # сохраним для случая, если не хватит 1 буквы
+
+        if has_empty and length - let_count == 1:  # если разница в 1 букву и пользователя есть пустая ячейка спросим,
+            # использовать ли ее, иначе вернем False
+            ans = "э"
+            while ans != "да" and ans != "нет":
+                ans = input("Вам не хватает 1 буквы, хотите использовать пустую фишку?(да/нет)")
+                ans = ans.lower()
+
+            if ans == "нет":
                 return False
+            else:
+                self.letters.remove(' ')
+                self.letters.append(needed_letter)  # удалим пустышку и добавим нужную букву
+        else:
+            return False
+
         return True

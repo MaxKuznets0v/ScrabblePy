@@ -102,27 +102,37 @@ class GameBoard:
         word = word.lower()
         if word not in self._dict:
             raise ValueError("Слова " + word.upper() + " нет в словаре")
-
+        word = word.upper()
         # проверим, что слово не выходит за край, если выполнено проверяем остальное
+        used_letters = list()  # у игрока могут быть не все необходимые буквы, главное, чтобы они лежали на поле
         if way == 'u':
             if x + len(word) - 1 <= 15:
                 for i in range(len(word)):
                     letter = self.board[x + i][y].cur_letter
                     if letter != word[i] and letter != '*' and self.board[x + i][y].mod_type is None:
-                        raise ValueError("Невозможно вставить слово " + word.upper())
+                        raise ValueError("Невозможно вставить слово " + word)
+                    elif letter == word[i]:
+                        used_letters.append(letter)
+
             else:
-                raise ValueError("Слово " + word.upper() + " выходит за границы по вертикали")
+                raise ValueError("Слово " + word + " выходит за границы по вертикали")
         else:
             if y + len(word) - 1 <= 15:
                 for i in range(len(word)):
                     letter = self.board[x][y + i].cur_letter
                     if letter != word[i] and letter != '*' and self.board[x + i][y].mod_type is None:
-                        raise ValueError("Невозможно вставить слово " + word.upper())
+                        raise ValueError("Невозможно вставить слово " + word)
+                    elif letter == word[i]:
+                        used_letters.append(letter)
             else:
-                raise ValueError("Слово " + word.upper() + " выходит за границы по горизонтали")
+                raise ValueError("Слово " + word + " выходит за границы по горизонтали")
 
-        #проверим, что данные буквы есть у пользователя
-        if not cur_player.has_letters(list(word)):
+        let_of_word = list(word)  # уберем те буквы что есть на поле
+        for elem in used_letters:
+            let_of_word.remove(elem)
+
+        #проверим, что оставшиеся буквы есть у пользователя
+        if not cur_player.has_letters(let_of_word):
             raise ValueError("У " + cur_player.get_name() + " нет нужных букв")
 
     def set_word(self, inp, cur_player):  # вставляет слово вызывает (вызывает функцию проверки и тд) и возвращает стоимость слова
