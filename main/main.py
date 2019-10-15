@@ -26,20 +26,53 @@ class Scrabble:
         name1 = input("Введите имя первого игрока: ")
         name2 = input("Введите имя второго игрока: ")
         self.player_list = [Player(0, name1, self._let_to_amount), Player(0, name2, self._let_to_amount)]
-        self.turn = random.randint(0, len(self.player_list))  # текущий ход игрока turn - индекс игрока в списке
+        self.turn = random.randint(0, len(self.player_list) - 1)  # текущий ход игрока turn - индекс игрока в списке
 
     def _next_turn(self):
         """Передает ход следующему игроку"""
         self.turn = (self.turn + 1) % len(self.player_list)
 
+    def _make_turn(self, cur_player):
+        """Совершает ход, защитывает очки и переводит ход"""
+        while True:
+            try:
+                inp = input("Ваш ход:")
+                if inp.lower() == "правила":  # выводит правила по необходимости
+                    self.show_rules()
+                    continue
+                elif inp.lower() == "пас":  # пропуск хода
+                    self._next_turn()
+                    break
+                cur_player.score += self.board.set_word(inp, cur_player)
+                cur_player.take_letters(self._let_to_amount)
+                self._next_turn()
+                break
+            except TypeError as er:
+                print(er)
+            except ValueError as er:
+                print(er)
+            except Exception:
+                print("Что-то пошло не так")
+
     def __init__(self):
         self.board = GameBoard()
         self._set_bag()
         self._create_players()
+        self.main()
 
+    def show_rules(self):  # TODO: правила
+        print("Правила:")
+        print("Здесь можно расписать правила")
+        print("Каждый ход совершается в следующем формате(без ковычек):\n'слово число(1-15) буквы(А-О) режим вставки(u/h)'")
+        print("Здесь u - вертикальная вставка сверху вниз, h - гороизонтальная справа налево, буквы А-О, без Ё")
 
+    def main(self):  # TODO: критерий остановки
+        playing = True
+        self.show_rules()
+        while playing:
+            player = self.player_list[self.turn]
+            self.board.print_board(player)
+            self._make_turn(player)
+        # По окончанию игры сравнить баллы и вывести на экоан имя победителя
 
 game = Scrabble()
-
-game.board.print_board(game.player_list[0])
-game.board.set_word("звон 1 Б u", game.player_list[0])

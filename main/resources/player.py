@@ -54,7 +54,7 @@ class Player:
             else:
                 self.letters.remove(' ')
                 self.letters.append(needed_letter)  # удалим пустышку и добавим нужную букву
-        else:
+        elif length != let_count:
             return False
 
         return True

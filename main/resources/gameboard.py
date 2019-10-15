@@ -120,7 +120,7 @@ class GameBoard:
             if y + len(word) - 1 <= 15:
                 for i in range(len(word)):
                     letter = self.board[x][y + i].cur_letter
-                    if letter != word[i] and letter != '*' and self.board[x + i][y].mod_type is None:
+                    if letter != word[i] and letter != '*' and self.board[x][y + i].mod_type is None:
                         raise ValueError("Невозможно вставить слово " + word)
                     elif letter == word[i]:
                         used_letters.append(letter)
@@ -135,49 +135,43 @@ class GameBoard:
         if not cur_player.has_letters(let_of_word):
             raise ValueError("У " + cur_player.get_name() + " нет нужных букв")
 
+        return let_of_word  # возвращаем буквы которые нужно удалять из руки игрока
+
     def set_word(self, inp, cur_player):  # вставляет слово вызывает (вызывает функцию проверки и тд) и возвращает стоимость слова
         # inp - строка, поданная на вход из консоли в формате "word x y u/h", где x и y - координаты начала слова,
         # а u/h - способ выкладки слово(вертикально или горизонтально) посмотрел на доску у своей scrabble,
         # там нумерация ячеек как в морском бое: цифры и буквы и начало координат в левом верхнем углу,
         # предлагаю сделать так же
         """Помещает слово на игровое поле"""
-        # этот блок try-except можно вынести в верхний метод (из которого вызывается set_word)
-        # так если в этой функции произойдет исключение мы узнает, что что-то пошло не так
-
-        try:
-            self.check_word(inp, cur_player)
-            word, x, let, way = inp.split()  # слово, координаты, способ выкладки
-            x = int(x)
-            let = let.upper()
-            y = ord(let) - 1039  # так как ord('A') = 1040
-            word = word.upper()
-            count = 0
-            modifier = 1
-            if way == 'u':
-                index = x
-                for letter in word:
+        deleting = self.check_word(inp, cur_player)
+        word, x, let, way = inp.split()  # слово, координаты, способ выкладки
+        x = int(x)
+        let = let.upper()
+        y = ord(let) - 1039  # так как ord('A') = 1040
+        word = word.upper()
+        count = 0
+        modifier = 1
+        if way == 'u':
+            index = x
+            for letter in word:
+                if letter in deleting:
                     cur_player.letters.remove(letter)  #удаляем буквы из руки игрока
-                    cell = self.board[index][y]
-                    if cell.mod_type == 'word':
-                        modifier *= cell.modifier
-                    count += cell.set_letter(letter)
-                    index += 1
+                cell = self.board[index][y]
+                if cell.mod_type == 'word':
+                    modifier *= cell.modifier
+                count += cell.set_letter(letter)
+                index += 1
 
-            else:
-                index = y
-                for letter in word:
+        else:
+            index = y
+            for letter in word:
+                if letter in deleting:
                     cur_player.letters.remove(letter)  #удаляем буквы из руки игрока
-                    cell = self.board[x][index]
-                    if cell.mod_type == 'word':
-                        modifier *= cell.modifier
-                    count += cell.set_letter(letter)
-                    index += 1
+                cell = self.board[x][index]
+                if cell.mod_type == 'word':
+                    modifier *= cell.modifier
+                count += cell.set_letter(letter)
+                index += 1
 
-            self.print_board(cur_player)
-            return modifier * count
-        except TypeError as er:
-            print(er)
-        except ValueError as er:
-            print(er)
-        except Exception:
-            print("Что-то пошло не так")
+        return modifier * count
+
