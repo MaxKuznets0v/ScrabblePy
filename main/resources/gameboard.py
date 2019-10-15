@@ -1,10 +1,8 @@
-from .player import Player
-import random
 from .cell import Cell
 
 
-class Scrabble:
-    """Главный игровой класс"""
+class GameBoard:
+    """Класс игровой доски"""
 
     def _fill_board(self):
         """Заполняет игровое поле начальными значениями"""
@@ -56,51 +54,12 @@ class Scrabble:
         self._dict = set(f.read().split(','))
         f.close()
 
-    def _set_tables(self):
-        """Инициализация таблицы количества букв"""
-        self._let_to_amount = {'А': 8, 'Б': 2, 'В': 4,
-                               'Г': 2, 'Д': 4, 'Е': 8,
-                               'Ё': 1, 'Ж': 1, 'З': 2,
-                               'И': 5, 'Й': 1, 'К': 4,
-                               'Л': 4, 'М': 3, 'Н': 5,
-                               'О': 10, 'П': 4, 'Р': 5,
-                               'С': 5, 'Т': 5, 'У': 4,
-                               'Ф': 1, 'Х': 1, 'Ц': 1,
-                               'Ш': 1, 'Щ': 1, 'Ъ': 1,
-                               'Ы': 2, 'Ь': 2, 'Э': 1,
-                               'Ю': 1, 'Я': 2, ' ': 2}
-
-    def _init_letters(self):
-        """Выставляет буквы игроков при старте"""
-        let = list()
-        for i in range(7):
-            while True:  # не даем взять больше букв, чем имеем
-                cur_letter = random.choice(list(self._let_to_amount.keys()))
-                if self._let_to_amount[cur_letter] > 0:
-                    break
-                continue
-            self._let_to_amount[cur_letter] -= 1
-            let.append(cur_letter)
-        return let
-
-    def _create_players(self):
-        """Создает 2 игроков"""
-        name1 = input("Введите имя первого игрока: ")
-        name2 = input("Введите имя второго игрока: ")
-        self.player_list = [Player(0, name1, self._init_letters()), Player(0, name2, self._init_letters())]
-        self.turn = random.randint(0, len(self.player_list))  # текузий ход игрока turn - индекс игрока в списке
-
-    def _next_turn(self):
-        """Передает ход следующему игроку"""
-        self.turn = (self.turn + 1) % len(self.player_list)
-
-    def __init__(self):  # TODO: выбор режима
+    def __init__(self):
         self._fill_board()
         self._set_dict()
-        self._set_tables()
-        self._create_players()
 
-    def print_board(self):  # TODO: имя и буквы текущего игрока после поля
+    def print_board(self, cur_player):
+        print("--------------------------------------------------------")
         for i in range(16):
             print('{:>3}'.format((self.board[0][i])), end='')
         print('\n')
@@ -110,11 +69,13 @@ class Scrabble:
             for j in range(1, 16):
                 print('{:>3}'.format(self.board[i][j].cur_letter), end='')
             print('\n')
+        print("Буквы " + cur_player.get_name() + ":")
+        print(*cur_player.letters, sep="__")
 
     def get_hint(self):  # подсказка для игрока куда ставить букву (можно реализовать подсвечивание
         pass  # или вставку буквы или слова на нужное место сразу)
 
-    def check_word(self, inp):  # TODO: параллельный ввод
+    def check_word(self, inp, cur_player):  # TODO: параллельный ввод
         # проверяет на формат: (слово, x, буква, способ выкладки) пример: "сосна 11 О u" иначе бросить исключение
         # TypeError само слово на корректность (есть ли слово в словаре, не выезжает ли оно за границы,
         # есть ли нужные буквы для этого слова у пользователя, пересекает ли оно необходимые буквы и тд,
@@ -161,10 +122,10 @@ class Scrabble:
                 raise ValueError("Слово " + word.upper() + " выходит за границы по горизонтали")
 
         #проверим, что данные буквы есть у пользователя
-        if not self.player_list[self.turn].has_letters(list(word)):
-            raise ValueError("У " + self.player_list[self.turn].get_name() + " нет нужных букв")
+        if not cur_player.has_letters(list(word)):
+            raise ValueError("У " + cur_player.get_name() + " нет нужных букв")
 
-    def set_word(self, inp):  # вставляет слово вызывает (вызывает функцию проверки и тд) и возвращает стоимость слова
+    def set_word(self, inp, cur_player):  # вставляет слово вызывает (вызывает функцию проверки и тд) и возвращает стоимость слова
         # inp - строка, поданная на вход из консоли в формате "word x y u/h", где x и y - координаты начала слова,
         # а u/h - способ выкладки слово(вертикально или горизонтально) посмотрел на доску у своей scrabble,
         # там нумерация ячеек как в морском бое: цифры и буквы и начало координат в левом верхнем углу,
@@ -174,18 +135,18 @@ class Scrabble:
         # так если в этой функции произойдет исключение мы узнает, что что-то пошло не так
 
         try:
-            self.check_word(inp)
+            self.check_word(inp, cur_player)
             word, x, let, way = inp.split()  # слово, координаты, способ выкладки
             x = int(x)
             let = let.upper()
-            y = ord(let) - 1039  # так как ord('A') = 1039
+            y = ord(let) - 1039  # так как ord('A') = 1040
             word = word.upper()
             count = 0
             modifier = 1
             if way == 'u':
                 index = x
                 for letter in word:
-                    self.player_list[self.turn].letters.remove(letter)
+                    cur_player.letters.remove(letter)  #удаляем буквы из руки игрока
                     cell = self.board[index][y]
                     if cell.mod_type == 'word':
                         modifier *= cell.modifier
@@ -195,14 +156,14 @@ class Scrabble:
             else:
                 index = y
                 for letter in word:
-                    self.player_list[self.turn].letters.remove(letter)
+                    cur_player.letters.remove(letter)  #удаляем буквы из руки игрока
                     cell = self.board[x][index]
                     if cell.mod_type == 'word':
                         modifier *= cell.modifier
                     count += cell.set_letter(letter)
                     index += 1
 
-            self.print_board()
+            self.print_board(cur_player)
             return modifier * count
         except TypeError as er:
             print(er)
