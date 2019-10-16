@@ -107,8 +107,6 @@ class GameBoard:
         word = word.upper()
         # проверим, что слово не выходит за край, если выполнено проверяем остальное
         used_letters = list()  # у игрока могут быть не все необходимые буквы, главное, чтобы они лежали на поле
-        x -= 1  # индексация клеток в self.board не от 1 до 15, а от 0 до 14
-        y -= 1
         f = False  # флаг, отвечающий за проверку того, что хотя бы раз было пересечено уже выложенное на доске слово
         if way == 'u':
             if x + len(word) < 15:
@@ -165,8 +163,7 @@ class GameBoard:
         count = 0
         modifier = 1
         if way == 'u':
-            index = x - 1
-            y -= 1
+            index = x
             for letter in word:
                 if letter in deleting:
                     cur_player.letters.remove(letter)  #удаляем буквы из руки игрока
@@ -177,8 +174,7 @@ class GameBoard:
                 index += 1
 
         else:
-            index = y - 1
-            x -= 1
+            index = y
             for letter in word:
                 if letter in deleting:
                     cur_player.letters.remove(letter)  #удаляем буквы из руки игрока
