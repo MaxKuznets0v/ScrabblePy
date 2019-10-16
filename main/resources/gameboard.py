@@ -1,4 +1,5 @@
 from .cell import Cell
+from resources.player import Player
 
 
 class GameBoard:
@@ -88,10 +89,12 @@ class GameBoard:
 
         # проверим что x и буква не выходят за пределы игрового поля
         word, x, y, way = words
-        x = int(x)
-        y = ord(y.upper()) - 1039
-        if 1 > x or x > 15 and 1 > y or y > 15:
-            raise TypeError("Введенные координаты выходят за границу игрового поля(1-15, А-О)")
+        y = y.upper()
+        if x.isdigit() and y in 'АБВГДЕЖЗИЙКЛМНО':
+            x = int(x)
+            y = ord(y.upper()) - 1039
+            if 1 > x or x > 15 and 1 > y or y > 15:
+                raise TypeError("Введенные координаты выходят за границу игрового поля(1-15, А-О)")
 
         # проверим что последний параметр u/h
         way = way.lower()
@@ -99,20 +102,23 @@ class GameBoard:
             raise TypeError("Выбрано неверное направление(u/h)")
 
         # проверим, что слово есть в словаре
-        word = word.lower()
-        if word not in self._dict:
+        if word.lower() not in self._dict:
             raise ValueError("Слова " + word.upper() + " нет в словаре")
         word = word.upper()
         # проверим, что слово не выходит за край, если выполнено проверяем остальное
         used_letters = list()  # у игрока могут быть не все необходимые буквы, главное, чтобы они лежали на поле
+        x -= 1  # индексация клеток в self.board не от 1 до 15, а от 0 до 14
+        y -= 1
+        f = False  # флаг, отвечающий за проверку того, что хотя бы раз было пересечено уже выложенное на доске слово
         if way == 'u':
-            if x + len(word) - 1 <= 15:
+            if x + len(word) < 15:
                 for i in range(len(word)):
                     letter = self.board[x + i][y].cur_letter
                     if letter != word[i] and letter != '*' and self.board[x + i][y].mod_type is None:
                         raise ValueError("Невозможно вставить слово " + word)
                     elif letter == word[i]:
                         used_letters.append(letter)
+                        f = True
 
             else:
                 raise ValueError("Слово " + word + " выходит за границы по вертикали")
@@ -124,12 +130,19 @@ class GameBoard:
                         raise ValueError("Невозможно вставить слово " + word)
                     elif letter == word[i]:
                         used_letters.append(letter)
+                        f = True
             else:
                 raise ValueError("Слово " + word + " выходит за границы по горизонтали")
+        if f:
+            let_of_word = list(word)  # уберем те буквы что есть на поле
+            if let_of_word == used_letters:
+                raise ValueError("Все буквы предложенного слова уже лежат на доске")
+            else:
+                for elem in used_letters:
+                    let_of_word.remove(elem)
 
-        let_of_word = list(word)  # уберем те буквы что есть на поле
-        for elem in used_letters:
-            let_of_word.remove(elem)
+        else:
+            raise ValueError("Выложенное слово не будет пересекаться с другими словами")
 
         #проверим, что оставшиеся буквы есть у пользователя
         if not cur_player.has_letters(let_of_word):
@@ -152,7 +165,8 @@ class GameBoard:
         count = 0
         modifier = 1
         if way == 'u':
-            index = x
+            index = x - 1
+            y -= 1
             for letter in word:
                 if letter in deleting:
                     cur_player.letters.remove(letter)  #удаляем буквы из руки игрока
@@ -163,7 +177,8 @@ class GameBoard:
                 index += 1
 
         else:
-            index = y
+            index = y - 1
+            x -= 1
             for letter in word:
                 if letter in deleting:
                     cur_player.letters.remove(letter)  #удаляем буквы из руки игрока

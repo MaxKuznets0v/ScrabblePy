@@ -1,6 +1,6 @@
 class Cell:
     """Ячейка игрового поля"""
-    def __init__(self, type_=None, letter='*', mod=1):
+    def __init__(self, type_=None, letter='--', mod=1):
         # желательно проверять, что ввелась именно строка длиной 1 и это буква
         self.let_to_price = {'А': 1, 'Б': 3, 'В': 1,
                              'Г': 3, 'Д': 2, 'Е': 1,
