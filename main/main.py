@@ -20,6 +20,7 @@ class Scrabble:
                                'Ш': 1, 'Щ': 1, 'Ъ': 1,
                                'Ы': 2, 'Ь': 2, 'Э': 1,
                                'Ю': 1, 'Я': 2, ' ': 2}
+        self._amount_of_letters = 103
 
     def _create_players(self):
         """Создает 2 игроков"""
@@ -27,6 +28,7 @@ class Scrabble:
         name2 = input("Введите имя второго игрока: ")
         self.player_list = [Player(0, name1, self._let_to_amount), Player(0, name2, self._let_to_amount)]
         self.turn = random.randint(0, len(self.player_list) - 1)  # текущий ход игрока turn - индекс игрока в списке
+        self._amount_of_letters -= 14
 
     def _next_turn(self):
         """Передает ход следующему игроку"""
@@ -44,7 +46,8 @@ class Scrabble:
                     self._next_turn()
                     break
                 cur_player.score += self.board.set_word(inp, cur_player)
-                cur_player.take_letters(self._let_to_amount)
+                if self._amount_of_letters > 0:  # если в мешочке есть буквы, то выдадим их игроку и запомним новое число букв в мешочке
+                    self._amount_of_letters = cur_player.take_letters(self._let_to_amount, self._amount_of_letters)
                 self._next_turn()
                 break
             except TypeError as er:
@@ -73,6 +76,6 @@ class Scrabble:
             player = self.player_list[self.turn]
             self.board.print_board(player)
             self._make_turn(player)
-        # По окончанию игры сравнить баллы и вывести на экоан имя победителя
+        # По окончанию игры сравнить баллы и вывести на экран имя победителя
 
 game = Scrabble()

@@ -70,6 +70,7 @@ class GameBoard:
             for j in range(1, 16):
                 print('{:>3}'.format(self.board[i][j].cur_letter), end='')
             print('\n')
+        print("Ход игрока", cur_player.get_name())
         print("Буквы " + cur_player.get_name() + ":")
         print(*cur_player.letters, sep="__")
 
@@ -112,7 +113,7 @@ class GameBoard:
             if x + len(word) < 15:
                 for i in range(len(word)):
                     letter = self.board[x + i][y].cur_letter
-                    if letter != word[i] and letter != '*' and self.board[x + i][y].mod_type is None:
+                    if letter != word[i] and letter != '--' and self.board[x + i][y].mod_type is None:
                         raise ValueError("Невозможно вставить слово " + word)
                     elif letter == word[i]:
                         used_letters.append(letter)

@@ -18,14 +18,17 @@ class Player:
         """Возвращает имя игрока"""
         return self._user_name
 
-    def take_letters(self, bag):
+    def take_letters(self, bag, am_of_let=103):
         """Берем буквы из мешочка"""
-        while len(self.letters) < 7:
+        count = am_of_let  # счетчик числа букв в мешочке
+        while len(self.letters) < 7 and count != 0:
             cur_letter = random.choice(list(bag.keys()))
             if bag[cur_letter] > 0:
                 bag[cur_letter] -= 1
+                count -= 1
                 self.letters.append(cur_letter)
             continue
+        return count
 
     def has_letters(self, letters):
         """Проверяет, есть ли необходимые буквы у игрока"""
