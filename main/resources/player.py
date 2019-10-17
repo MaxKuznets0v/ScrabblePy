@@ -1,34 +1,34 @@
 import random
+from resources import Utils
 
 
 class Player:
     """Класс игрока с полями score, user_name и letters"""
 
-    def _init_letters(self, bag):
+    def _init_letters(self, bag, am_of_let):
         """Выставляет буквы игроков при старте"""
         self.letters = list()
-        self.take_letters(bag)
+        self.take_letters(bag, am_of_let)
 
-    def __init__(self, score, name, bag):
+    def __init__(self, score, name, bag, am_of_let):
         self.score = score
-        self._user_name = name
-        self._init_letters(bag)
+        self._name = name
+        self._init_letters(bag, am_of_let)
 
-    def get_name(self):
+    @property
+    def name(self):
         """Возвращает имя игрока"""
-        return self._user_name
+        return self._name
 
-    def take_letters(self, bag, am_of_let=103):
+    def take_letters(self, bag, am_of_let):
         """Берем буквы из мешочка"""
-        count = am_of_let  # счетчик числа букв в мешочке
-        while len(self.letters) < 7 and count != 0:
+        while len(self.letters) < Utils.n_player_let and am_of_let != 0:
             cur_letter = random.choice(list(bag.keys()))
             if bag[cur_letter] > 0:
                 bag[cur_letter] -= 1
-                count -= 1
+                am_of_let -= 1
                 self.letters.append(cur_letter)
             continue
-        return count
 
     def has_letters(self, letters):
         """Проверяет, есть ли необходимые буквы у игрока"""
