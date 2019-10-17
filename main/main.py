@@ -1,9 +1,6 @@
 """Главный игровой файл"""
 from resources import *
-# from resources.gameboard import GameBoard
 import random
-# from resources.cell import Cell
-# from resources.player import Player
 from resources import Utils
 
 
@@ -18,13 +15,25 @@ class Scrabble:
         """Создает 2 игроков"""
         name1 = input("Введите имя первого игрока: ")
         name2 = input("Введите имя второго игрока: ")
-        self.player_list = [Player(0, name1, self._let_to_amount, self._amount_of_letters),
-                            Player(0, name2, self._let_to_amount, self._amount_of_letters)]
+        self.player_list = [Player(0, name1),
+                            Player(0, name2)]
+        for pl in self.player_list:
+            self.take_letters(pl)
         self.turn = random.randint(0, len(self.player_list) - 1)  # текущий ход игрока turn - индекс игрока в списке
 
     def _next_turn(self):
         """Передает ход следующему игроку"""
         self.turn = (self.turn + 1) % len(self.player_list)
+
+    def take_letters(self, player):
+        """Берем буквы из мешочка"""
+        while len(player.letters) < Utils.n_player_let and self._amount_of_letters != 0:
+            cur_letter = random.choice(list(self._let_to_amount.keys()))
+            if self._let_to_amount[cur_letter] > 0:
+                self._let_to_amount[cur_letter] -= 1
+                self._amount_of_letters -= 1
+                player.letters.append(cur_letter)
+            continue
 
     def _make_turn(self):
         """Совершает ход, защитывает очки и переводит ход"""
@@ -38,8 +47,7 @@ class Scrabble:
                     self._next_turn()
                     break
                 self.player_list[self.turn].score += self.set_word(inp)
-                if self._amount_of_letters > 0:  # если в мешочке есть буквы, то выдадим их игроку и запомним новое число букв в мешочке
-                    self._amount_of_letters = self.player_list[self.turn].take_letters(self._let_to_amount, self._amount_of_letters)
+                self.take_letters(self.player_list[self.turn])
                 self._next_turn()
                 break
             except TypeError as er:
@@ -162,6 +170,7 @@ class Scrabble:
                 cell = self.board.board[index][y]
                 if cell.mod_type == 'word':
                     modifier *= cell.modifier
+                    cell.make_none()
                 count += cell.set_letter(letter)
                 index += 1
 
@@ -173,6 +182,7 @@ class Scrabble:
                 cell = self.board.board[x][index]
                 if cell.mod_type == 'word':
                     modifier *= cell.modifier
+                    cell.make_none()
                 count += cell.set_letter(letter)
                 index += 1
 

@@ -30,7 +30,6 @@ gap_filler = "--"
 
 dict = "resources/erudit.txt"
 
-
 let_sep = "__"
 
 y_axis = 'АБВГДЕЖЗИЙКЛМНО'

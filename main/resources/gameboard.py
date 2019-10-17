@@ -2,6 +2,7 @@ from .cell import Cell
 from resources.player import Player
 from resources import Utils
 
+
 class GameBoard:
     """Класс игровой доски"""
 
@@ -63,8 +64,3 @@ class GameBoard:
             for j in range(1, 16):
                 print('{:>3}'.format(self.board[i][j].cur_letter), end='')
             print('\n')
-
-    def get_hint(self):  # подсказка для игрока куда ставить букву (можно реализовать подсвечивание
-        pass  # или вставку буквы или слова на нужное место сразу)
-
-

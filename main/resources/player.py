@@ -5,30 +5,15 @@ from resources import Utils
 class Player:
     """Класс игрока с полями score, user_name и letters"""
 
-    def _init_letters(self, bag, am_of_let):
-        """Выставляет буквы игроков при старте"""
-        self.letters = list()
-        self.take_letters(bag, am_of_let)
-
-    def __init__(self, score, name, bag, am_of_let):
+    def __init__(self, score, name):
         self.score = score
         self._name = name
-        self._init_letters(bag, am_of_let)
+        self.letters = list()
 
     @property
     def name(self):
         """Возвращает имя игрока"""
         return self._name
-
-    def take_letters(self, bag, am_of_let):
-        """Берем буквы из мешочка"""
-        while len(self.letters) < Utils.n_player_let and am_of_let != 0:
-            cur_letter = random.choice(list(bag.keys()))
-            if bag[cur_letter] > 0:
-                bag[cur_letter] -= 1
-                am_of_let -= 1
-                self.letters.append(cur_letter)
-            continue
 
     def has_letters(self, letters):
         """Проверяет, есть ли необходимые буквы у игрока"""
