@@ -8,6 +8,7 @@
       <change beforePath="$PROJECT_DIR$/resources/cell.py" beforeDir="false" afterPath="$PROJECT_DIR$/resources/cell.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/erudit.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/gameboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/resources/gameboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/resources/player.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/word_rus.txt" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -42,8 +43,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/resources/player.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="499">
-              <caret line="63" selection-start-line="63" selection-end-line="63" />
+            <state relative-caret-position="697">
+              <caret line="41" column="30" lean-forward="true" selection-start-line="41" selection-start-column="30" selection-end-line="41" selection-end-column="30" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -83,9 +87,9 @@
       <list>
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/resources/cell.py" />
-        <option value="$PROJECT_DIR$/resources/player.py" />
         <option value="$PROJECT_DIR$/resources/gameboard.py" />
         <option value="$PROJECT_DIR$/resources/Utils.py" />
+        <option value="$PROJECT_DIR$/resources/player.py" />
       </list>
     </option>
   </component>
@@ -185,7 +189,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
+    <frame x="-7" y="-7" width="1295" height="695" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2494043" />
@@ -280,8 +284,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/player.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="499">
-          <caret line="63" selection-start-line="63" selection-end-line="63" />
+        <state relative-caret-position="697">
+          <caret line="41" column="30" lean-forward="true" selection-start-line="41" selection-start-column="30" selection-end-line="41" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
