@@ -140,6 +140,8 @@ class Scrabble:
             y = ord(y.upper()) - 1039
             if 1 > x or x > 15 and 1 > y or y > 15:
                 raise TypeError("Введенные координаты выходят за границу игрового поля(1-15, А-О)")
+        else:
+            raise TypeError(str(x) + " не число или " + str(y) + " не буква")
 
         # проверим что последний параметр u/h
         way = way.lower()
