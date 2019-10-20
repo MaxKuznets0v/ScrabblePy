@@ -138,7 +138,7 @@ class Scrabble:
         word = word.upper()
         # проверим, что слово не выходит за край, если выполнено проверяем остальное
         used_letters = list()  # у игрока могут быть не все необходимые буквы, главное, чтобы они лежали на поле
-        f = False  # флаг, отвечающий за проверку того, что хотя бы раз было пересечено уже выложенное на доске слово
+        has_intersec = False  # флаг, отвечающий за проверку того, что хотя бы раз было пересечено уже выложенное на доске слово
         if way == Utils.vert_dir:
             if x + len(word) < 15:
                 for i in range(len(word)):
@@ -147,7 +147,7 @@ class Scrabble:
                         raise ValueError("Невозможно вставить слово " + word)
                     elif letter == word[i]:
                         used_letters.append(letter)
-                        f = True
+                        has_intersec = True
 
             else:
                 raise ValueError("Слово " + word + " выходит за границы по вертикали")
@@ -159,10 +159,10 @@ class Scrabble:
                         raise ValueError("Невозможно вставить слово " + word)
                     elif letter == word[i]:
                         used_letters.append(letter)
-                        f = True
+                        has_intersec = True
             else:
                 raise ValueError("Слово " + word + " выходит за границы по горизонтали")
-        if f:
+        if has_intersec:
             let_of_word = list(word)  # уберем те буквы что есть на поле
             if let_of_word == used_letters:
                 raise ValueError("Все буквы предложенного слова уже лежат на доске")
