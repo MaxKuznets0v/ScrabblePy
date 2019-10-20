@@ -51,8 +51,8 @@ class Scrabble:
                 print(er)
             except ValueError as er:
                 print(er)
-            # except Exception:
-            #     print("Что-то пошло не так")
+            except Exception:
+                print("Что-то пошло не так")
 
     def _set_dict(self):
         """Получение словаря возможных слов"""
@@ -203,7 +203,7 @@ class Scrabble:
 
         # проверим, что оставшиеся буквы есть у пользователя
         if not self.player_list[self.turn].has_letters(let_of_word):
-            raise ValueError("У " + self.player_list[self.turn].name() + " нет нужных букв")
+            raise ValueError("У " + self.player_list[self.turn].name + " нет нужных букв")
 
         # параллельный ввод слов
         if way == Utils.vert_dir:
