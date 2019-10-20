@@ -25,6 +25,31 @@ class Scrabble:
         """Передает ход следующему игроку"""
         self.turn = (self.turn + 1) % len(self.player_list)
 
+    def exchange(self, ex_let):
+        """Принимает буквы, которые нужно сбросить и сбрасывает их"""
+        if len(ex_let) <= Utils.n_player_let:  # этот блок проверяет, что нужные буквы есть у игрока
+            user_let = list(self.player_list[self.turn].letters)  # копируем список букв игрока
+            given_let = list(ex_let)  # скопируем введенные буквы
+            for i in range(len(given_let)):
+                ch = given_let.pop().upper()
+                if ch == '_':  # так как пустышку обозначили за _
+                    ch = ' '
+                    ex_let.remove('_')
+                    ex_let.append(' ')  # заменим '_' на ' ' так как у игрока опустышка индексируется так
+                try:
+                    user_let.remove(ch)
+                except ValueError:  # бросится исключение, если в user_let нет данной буквы
+                    raise ValueError("У вас нет нужных букв!")  # ловим и пробрасываем новое исключение
+
+            for letter in ex_let:  # этот блок занимается удалением буквы из руки и выдачей новых
+                self._let_to_amount[letter] += 1
+                self._amount_of_letters += 1
+                self.player_list[self.turn].letters.remove(letter)
+
+            self.take_letters(self.player_list[self.turn])
+        else:
+            raise ValueError("У вас нет столько букв!")
+
     def take_letters(self, player):
         """Берем буквы из мешочка"""
         while len(player.letters) < Utils.n_player_let and self._amount_of_letters != 0:
@@ -40,12 +65,16 @@ class Scrabble:
         while True:
             try:
                 inp = input("Ваш ход:")
+                inp_expr = list(inp.split())
                 if inp.lower() == "правила":  # выводит правила по необходимости
                     self.show_rules()
                     continue
-                elif inp.lower() == "пас":  # пропуск хода
+                elif inp_expr[0].lower() == "пас":  # пропуск хода
+                    if len(inp_expr) > 1:  # если ввели пас и далее буквы, то заменяем эти буквы
+                        self.exchange(inp_expr[1:])  # передадим все буквы кроме слова пас
                     self._next_turn()
                     break
+
                 self.player_list[self.turn].score += self.set_word(inp)
                 self.take_letters(self.player_list[self.turn])
                 self._next_turn()
@@ -73,8 +102,10 @@ class Scrabble:
     def show_rules(self):  # TODO: правила
         print("Правила:")
         print("Здесь можно расписать правила")
-        print("Каждый ход совершается в следующем формате(без кавычек):\n'слово число(1-15) буквы(А-О) режим вставки(u/h)'")
-        print("Здесь u - вертикальная вставка сверху вниз, h - гороизонтальная справа налево, буквы А-О, без Ё")
+        print("Каждый ход совершается в следующем формате(без кавычек):\n'слово число(1-15) буквы(А-О) режим вставки(в/г)'")
+        print("Здесь в - вертикальная вставка сверху вниз, г - гороизонтальная справа налево, буквы А-О, без Ё")
+        print("Для пропуска хода введите: 'пас' и далее через пробел, отбрасывемые буквы(для пропуска хода без сброса букв")
+        print("пишите 'пас' без последующих букв), пустышка обозначается '_'")
 
     def check_word(self, inp):  # TODO: параллельный ввод
         # проверяет на формат: (слово, x, буква, способ выкладки) пример: "сосна 11 О u" иначе бросить исключение
@@ -98,8 +129,8 @@ class Scrabble:
 
         # проверим что последний параметр u/h
         way = way.lower()
-        if way != 'h' and way != 'u':
-            raise TypeError("Выбрано неверное направление(u/h)")
+        if way != Utils.hor_dir and way != Utils.vert_dir:
+            raise TypeError("Выбрано неверное направление(г/в)")
 
         # проверим, что слово есть в словаре
         if word.lower() not in self._dict:
@@ -108,7 +139,7 @@ class Scrabble:
         # проверим, что слово не выходит за край, если выполнено проверяем остальное
         used_letters = list()  # у игрока могут быть не все необходимые буквы, главное, чтобы они лежали на поле
         f = False  # флаг, отвечающий за проверку того, что хотя бы раз было пересечено уже выложенное на доске слово
-        if way == 'u':
+        if way == Utils.vert_dir:
             if x + len(word) < 15:
                 for i in range(len(word)):
                     letter = self.board.board[x + i][y].cur_letter
@@ -162,7 +193,7 @@ class Scrabble:
         word = word.upper()
         count = 0
         modifier = 1
-        if way == 'u':
+        if way == Utils.vert_dir:
             index = x
             for letter in word:
                 if letter in deleting:

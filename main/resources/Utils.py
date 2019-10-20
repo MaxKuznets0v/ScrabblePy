@@ -33,3 +33,7 @@ dict = "resources/erudit.txt"
 let_sep = "__"
 
 y_axis = 'АБВГДЕЖЗИЙКЛМНО'
+
+hor_dir = "г"
+
+vert_dir = "в"
