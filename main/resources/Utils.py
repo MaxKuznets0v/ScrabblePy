@@ -39,3 +39,5 @@ hor_dir = "г"
 vert_dir = "в"
 
 max_passes = 2
+
+board_center = (8, 8)

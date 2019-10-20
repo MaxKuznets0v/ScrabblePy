@@ -156,10 +156,13 @@ class Scrabble:
         # проверим, что слово не выходит за край, если выполнено проверяем остальное
         used_letters = list()  # у игрока могут быть не все необходимые буквы, главное, чтобы они лежали на поле
         has_intersec = False  # флаг, отвечающий за проверку того, что хотя бы раз было пересечено уже выложенное на доске слово
+        center_crossing = False # флаг, проверяющий, что слово проходит через центр игрового поля
         if way == Utils.vert_dir:
             if x + len(word) < 15:
                 for i in range(len(word)):
                     letter = self.board.board[x + i][y].cur_letter
+                    if x + i == Utils.board_center[0] and y == Utils.board_center[1]:
+                        center_crossing = True
                     if letter != word[i] and letter != Utils.gap_filler and self.board.board[x + i][y].mod_type is None:
                         raise ValueError("Невозможно вставить слово " + word)
                     elif letter == word[i]:
@@ -172,6 +175,8 @@ class Scrabble:
             if y + len(word) - 1 <= 15:
                 for i in range(len(word)):
                     letter = self.board.board[x][y + i].cur_letter
+                    if x == Utils.board_center[0] and y + i == Utils.board_center[1]:
+                        center_crossing = True
                     if letter != word[i] and letter != Utils.gap_filler and self.board.board[x][y + i].mod_type is None:
                         raise ValueError("Невозможно вставить слово " + word)
                     elif letter == word[i]:
@@ -186,7 +191,9 @@ class Scrabble:
             else:
                 for elem in used_letters:
                     let_of_word.remove(elem)
-
+        elif self.board.board[Utils.board_center[0]][Utils.board_center[1]].cur_letter == Utils.gap_filler:
+            if not center_crossing:
+                raise ValueError("Предлоенное на первом ходу слово не проходит через центр поля")
         else:
             raise ValueError("Выложенное слово не будет пересекаться с другими словами")
 
