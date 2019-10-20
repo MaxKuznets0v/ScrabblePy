@@ -45,7 +45,6 @@ class Scrabble:
                 self.take_letters(self.player_list[self.turn])
                 for pl in self.player_list:
                     pl.passes = 0  # обнуляем пропуски после хода
-                #  self.player_list[self.turn].passes = 0
                 self._next_turn()
                 break
             except TypeError as er:
@@ -180,7 +179,7 @@ class Scrabble:
                         has_intersec = True
             else:
                 raise ValueError("Слово " + word + " выходит за границы по горизонтали")
-        if True:
+        if has_intersec:
             let_of_word = list(word)  # уберем те буквы что есть на поле
             if let_of_word == used_letters:
                 raise ValueError("Все буквы предложенного слова уже лежат на доске")
