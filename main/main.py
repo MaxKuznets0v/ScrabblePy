@@ -2,7 +2,7 @@
 from resources import *
 import random
 from resources import Utils
-
+import os
 
 class Scrabble:
     """Основной игровой класс"""
@@ -56,7 +56,9 @@ class Scrabble:
 
     def _set_dict(self):
         """Получение словаря возможных слов"""
-        f = open(Utils.dict, encoding="utf-8")
+        dirname = os.path.dirname(__file__)
+        path = os.path.join(dirname, Utils.dict)
+        f = open(path, encoding="utf-8")
         self._dict = set(f.read().split(','))
         f.close()
 
