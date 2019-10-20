@@ -51,8 +51,8 @@ class Scrabble:
                 print(er)
             except ValueError as er:
                 print(er)
-            except Exception:
-                print("Что-то пошло не так")
+            # except Exception:
+            #     print("Что-то пошло не так")
 
     def _set_dict(self):
         """Получение словаря возможных слов"""
@@ -158,7 +158,7 @@ class Scrabble:
         has_intersec = False  # флаг, отвечающий за проверку того, что хотя бы раз было пересечено уже выложенное на доске слово
         center_crossing = False # флаг, проверяющий, что слово проходит через центр игрового поля
         if way == Utils.vert_dir:
-            if x + len(word) < 15:
+            if x + len(word) - 1 <= 15:
                 for i in range(len(word)):
                     letter = self.board.board[x + i][y].cur_letter
                     if x + i == Utils.board_center[0] and y == Utils.board_center[1]:
@@ -183,7 +183,8 @@ class Scrabble:
                         used_letters.append(letter)
                         has_intersec = True
             else:
-                raise ValueError("Слово " + word + " выходит за границы по горизонтали")
+                raise ValueError("Слово " + word + " выходит за границы по горизонтали"
+                                 )
         if has_intersec:
             let_of_word = list(word)  # уберем те буквы что есть на поле
             if let_of_word == used_letters:
@@ -193,13 +194,70 @@ class Scrabble:
                     let_of_word.remove(elem)
         elif self.board.board[Utils.board_center[0]][Utils.board_center[1]].cur_letter == Utils.gap_filler:
             if not center_crossing:
-                raise ValueError("Предлоенное на первом ходу слово не проходит через центр поля")
+                raise ValueError("Предложенное на первом ходу слово не проходит через центр поля")
+            let_of_word = used_letters
         else:
             raise ValueError("Выложенное слово не будет пересекаться с другими словами")
 
         # проверим, что оставшиеся буквы есть у пользователя
         if not self.player_list[self.turn].has_letters(let_of_word):
             raise ValueError("У " + self.player_list[self.turn].name() + " нет нужных букв")
+
+        # параллельный ввод слов
+        if way == Utils.vert_dir:
+            up = ""
+            down = ""
+            i = 1
+            while x - i > 0 and self.board.board[x-i][y].cur_letter != Utils.gap_filler and self.board.board[x-i][y].mod_type is None:
+                up += self.board.board[x-i][y].cur_letter
+                i += 1
+            i = 1
+            while x + i < 16 and self.board.board[x+i][y].cur_letter != Utils.gap_filler and self.board.board[x+i][y].mod_type is None:
+                down += self.board.board[x+i][y].cur_letter
+                i += 1
+            temp = (up + word + down).lower()
+            if temp in self._dict:
+                for j in range(len(word)):
+                    new_word = word[j]
+                    i = 1
+                    while y - i > 0 and self.board.board[x+j][y-i].cur_letter != Utils.gap_filler and self.board.board[x+j][y-i].mod_type is None:
+                        new_word = self.board.board[x+j][y-i].cur_letter + new_word
+                        i += 1
+                    i = 1
+                    while y + i < 16 and self.board.board[x+j][y+i].cur_letter != Utils.gap_filler and self.board.board[x+j][y+i].mod_type is None:
+                        new_word = new_word + self.board.board[x+j][y+i].cur_letter
+                        i += 1
+                    if not (new_word.lower() in self._dict) and new_word != word[j]:
+                        raise ValueError(f"Добавление буквы {word[j]} приведет к появления на доске слова {new_word}, которого нет в словаре")
+            else:
+                raise ValueError(f"Добавление слова приведет к появления на доске слова {temp}, которого нет в словаре")
+        else:
+            left = ""
+            right = ""
+            i = 1
+            while y - i > 0 and self.board.board[x][y-i].cur_letter != Utils.gap_filler and self.board.board[x][y-i].mod_type is None:
+                left += self.board.board[x][y-i].cur_letter
+                i += 1
+            i = 1
+            while y + i < 16 and self.board.board[x][y+i].cur_letter != Utils.gap_filler and self.board.board[x][y+i].mod_type is None:
+                right += self.board.board[x][y+i].cur_letter
+                i += 1
+            temp = (left + word + right).lower()
+            if temp.lower() in self._dict:
+                for j in range(len(word)):
+                    new_word = word[j]
+                    i = 1
+                    while x - i > 0 and self.board.board[x-i][y+j].cur_letter != Utils.gap_filler and self.board.board[x-i][y+j].mod_type is None:
+                        new_word = self.board.board[x-i][y+j].cur_letter + new_word
+                        i += 1
+                    i = 1
+                    while x + i < 16 and self.board.board[x+i][y+j].cur_letter != Utils.gap_filler and self.board.board[x+i][y+j] is None:
+                        new_word = new_word + self.board.board[x+i][y+j].cur_letter
+                        i += 1
+                    if not (new_word.lower() in self._dict) and new_word != word[j]:
+                        raise ValueError(f"Добавление буквы {word[j]} приведет к появления на доске слова {new_word}, которого нет в словаре")
+            else:
+                raise ValueError(f"Добавление слова приведет к появления на доске слова {temp}, которого нет в словаре")
 
         return let_of_word  # возвращаем буквы которые нужно удалять из руки игрока
 
@@ -276,7 +334,7 @@ class Scrabble:
             for i in range(eq_score):
                 print(self.player_list[i].name, end=", ")
         else:
-            print("ПОБЕДА ", self.player_list[0].name)
+            print("ПОБЕДА ИГРОКА", self.player_list[0].name)
 
         print("Количество очков победителя:", self.player_list[0].score)
         for i in range(eq_score, len(self.player_list)):
