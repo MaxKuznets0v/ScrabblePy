@@ -6,6 +6,7 @@ from resources import Utils
 
 class Scrabble:
     """Основной игровой класс"""
+
     def _set_bag(self):
         """Инициализация таблицы количества букв"""
         self._let_to_amount = Utils.bag
@@ -24,6 +25,50 @@ class Scrabble:
     def _next_turn(self):
         """Передает ход следующему игроку"""
         self.turn = (self.turn + 1) % len(self.player_list)
+
+    def _make_turn(self):
+        """Совершает ход, защитывает очки и переводит ход"""
+        while True:
+            try:
+                inp = input("Ваш ход:")
+                inp_expr = list(inp.split())
+                if inp.lower() == "правила":  # выводит правила по необходимости
+                    self.show_rules()
+                    continue
+                elif inp_expr[0].lower() == "пас":  # пропуск хода
+                    if len(inp_expr) > 1:  # если ввели пас и далее буквы, то заменяем эти буквы
+                        self.exchange(inp_expr[1:])  # передадим все буквы кроме слова пас
+                    self.player_list[self.turn].passes += 1  # увеличиваем счетчик пропусков
+                    self._next_turn()
+                    break
+                self.player_list[self.turn].score += self.set_word(inp)
+                self.take_letters(self.player_list[self.turn])
+                self.player_list[self.turn].passes = 0  # обнуляем пропуски после хода
+                self._next_turn()
+                break
+            except TypeError as er:
+                print(er)
+            except ValueError as er:
+                print(er)
+            except Exception:
+                print("Что-то пошло не так")
+
+    def _set_dict(self):
+        """Получение словаря возможных слов"""
+        f = open(Utils.dict, encoding="utf-8")
+        self._dict = set(f.read().split(','))
+        f.close()
+
+    def _score(self, player):
+        """Требуется как ключ для сортировки"""
+        return player.score
+
+    def __init__(self):
+        self.board = GameBoard()
+        self._set_bag()
+        self._create_players()
+        self._set_dict()
+        self.main()
 
     def exchange(self, ex_let):
         """Принимает буквы, которые нужно сбросить и сбрасывает их"""
@@ -60,44 +105,13 @@ class Scrabble:
                 player.letters.append(cur_letter)
             continue
 
-    def _make_turn(self):
-        """Совершает ход, защитывает очки и переводит ход"""
-        while True:
-            try:
-                inp = input("Ваш ход:")
-                inp_expr = list(inp.split())
-                if inp.lower() == "правила":  # выводит правила по необходимости
-                    self.show_rules()
-                    continue
-                elif inp_expr[0].lower() == "пас":  # пропуск хода
-                    if len(inp_expr) > 1:  # если ввели пас и далее буквы, то заменяем эти буквы
-                        self.exchange(inp_expr[1:])  # передадим все буквы кроме слова пас
-                    self._next_turn()
-                    break
-
-                self.player_list[self.turn].score += self.set_word(inp)
-                self.take_letters(self.player_list[self.turn])
-                self._next_turn()
-                break
-            except TypeError as er:
-                print(er)
-            except ValueError as er:
-                print(er)
-            except Exception:
-                print("Что-то пошло не так")
-
-    def _set_dict(self):
-        """Получение словаря возможных слов"""
-        f = open(Utils.dict, encoding="utf-8")
-        self._dict = set(f.read().split(','))
-        f.close()
-
-    def __init__(self):
-        self.board = GameBoard()
-        self._set_bag()
-        self._create_players()
-        self._set_dict()
-        self.main()
+    def game_over(self):
+        """Проверка на окончание игры
+        Если игроки два раза подряд пасанут игра заканчивается"""
+        for pl in self.player_list:
+            if pl.passes != Utils.max_passes:  # Если все игроки имеют максимальное коло-во пасов, сюда не зайдет
+                return False
+        return True
 
     def show_rules(self):  # TODO: правила
         print("Правила:")
@@ -113,7 +127,7 @@ class Scrabble:
         # есть ли нужные буквы для этого слова у пользователя, пересекает ли оно необходимые буквы и тд,
         # иначе бросаем ValueError
         """Проверка ввода пользователя на корректность"""
-        #проверим, что на вход получили 4 значения
+        # проверим, что на вход получили 4 значения
         words = inp.split()
         if len(words) != 4:
             raise TypeError("Введено отличное от 4 количество слов(слово, x, буква, способ выкладки)")
@@ -173,7 +187,7 @@ class Scrabble:
         else:
             raise ValueError("Выложенное слово не будет пересекаться с другими словами")
 
-        #проверим, что оставшиеся буквы есть у пользователя
+        # проверим, что оставшиеся буквы есть у пользователя
         if not self.player_list[self.turn].has_letters(let_of_word):
             raise ValueError("У " + self.player_list[self.turn].name() + " нет нужных букв")
 
@@ -197,7 +211,7 @@ class Scrabble:
             index = x
             for letter in word:
                 if letter in deleting:
-                    self.player_list[self.turn].letters.remove(letter)  #удаляем буквы из руки игрока
+                    self.player_list[self.turn].letters.remove(letter)  # удаляем буквы из руки игрока
                 cell = self.board.board[index][y]
                 if cell.mod_type == 'word':
                     modifier *= cell.modifier
@@ -209,7 +223,7 @@ class Scrabble:
             index = y
             for letter in word:
                 if letter in deleting:
-                    self.player_list[self.turn].letters.remove(letter)  #удаляем буквы из руки игрока
+                    self.player_list[self.turn].letters.remove(letter)  # удаляем буквы из руки игрока
                 cell = self.board.board[x][index]
                 if cell.mod_type == 'word':
                     modifier *= cell.modifier
@@ -219,7 +233,7 @@ class Scrabble:
 
         return modifier * count
 
-    def main(self):  # TODO: критерий остановки
+    def main(self):
         playing = True
         self.show_rules()
         while playing:
@@ -228,6 +242,27 @@ class Scrabble:
             print("Буквы " + self.player_list[self.turn].name + ":")
             print(*self.player_list[self.turn].letters, sep=Utils.let_sep)
             self._make_turn()
-        # По окончанию игры сравнить баллы и вывести на экран имя победителя
+            if self.game_over():
+                playing = False
+
+        print("\n")
+        self.player_list.sort(key=self._score, reverse=True)
+        max_score = self.player_list[0].score
+        eq_score = 0
+        for pl in self.player_list:  # если несколько игроков имеет одинаковые очки
+            if pl.score == max_score:
+                eq_score += 1
+
+        if eq_score > 1:
+            print("НИЧЬЯ!")
+            print("Победили: ", end="")  # выводим имена игроков - победителей
+            for i in range(eq_score):
+                print(self.player_list[i].name, end=", ")
+        else:
+            print("ПОБЕДА ", self.player_list[0].name)
+
+        print("Количество очков победителя: ", self.player_list[0].score)
+        for i in range(eq_score, len(self.player_list)):
+            print(self.player_list[i].name, ': ', self.player_list[i].score)
 
 game = Scrabble()

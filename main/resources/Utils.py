@@ -37,3 +37,5 @@ y_axis = 'АБВГДЕЖЗИЙКЛМНО'
 hor_dir = "г"
 
 vert_dir = "в"
+
+max_passes = 2

@@ -3,12 +3,13 @@ from resources import Utils
 
 
 class Player:
-    """Класс игрока с полями score, user_name и letters"""
+    """Класс игрока с полями score, user_name, letters и passes - кол-во пропусков подряд"""
 
     def __init__(self, score, name):
         self.score = score
         self._name = name
         self.letters = list()
+        self.passes = 0
 
     @property
     def name(self):
