@@ -90,9 +90,9 @@ class Scrabble:
                     raise ValueError("У вас нет нужных букв!")  # ловим и пробрасываем новое исключение
 
             for letter in ex_let:  # этот блок занимается удалением буквы из руки и выдачей новых
-                self._let_to_amount[letter] += 1
+                self._let_to_amount[letter.upper()] += 1
                 self._amount_of_letters += 1
-                self.player_list[self.turn].letters.remove(letter)
+                self.player_list[self.turn].letters.remove(letter.upper())
 
             self.take_letters(self.player_list[self.turn])
         else:
