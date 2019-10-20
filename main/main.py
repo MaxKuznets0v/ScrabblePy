@@ -197,7 +197,7 @@ class Scrabble:
         elif self.board.board[Utils.board_center[0]][Utils.board_center[1]].cur_letter == Utils.gap_filler:
             if not center_crossing:
                 raise ValueError("Предложенное на первом ходу слово не проходит через центр поля")
-            let_of_word = used_letters
+            let_of_word = list(word)
         else:
             raise ValueError("Выложенное слово не будет пересекаться с другими словами")
 
@@ -210,12 +210,13 @@ class Scrabble:
             up = ""
             down = ""
             i = 1
+            t = len(word)
             while x - i > 0 and self.board.board[x-i][y].cur_letter != Utils.gap_filler and self.board.board[x-i][y].mod_type is None:
                 up += self.board.board[x-i][y].cur_letter
                 i += 1
             i = 1
-            while x + i < 16 and self.board.board[x+i][y].cur_letter != Utils.gap_filler and self.board.board[x+i][y].mod_type is None:
-                down += self.board.board[x+i][y].cur_letter
+            while x + t + i - 1 < 16 and self.board.board[x + t + i - 1][y].cur_letter != Utils.gap_filler and self.board.board[x + t + i - 1][y].mod_type is None:
+                down += self.board.board[x + t + i - 1][y].cur_letter
                 i += 1
             temp = (up + word + down).lower()
             if temp in self._dict:
@@ -236,13 +237,14 @@ class Scrabble:
         else:
             left = ""
             right = ""
+            t = len(word)
             i = 1
             while y - i > 0 and self.board.board[x][y-i].cur_letter != Utils.gap_filler and self.board.board[x][y-i].mod_type is None:
                 left += self.board.board[x][y-i].cur_letter
                 i += 1
             i = 1
-            while y + i < 16 and self.board.board[x][y+i].cur_letter != Utils.gap_filler and self.board.board[x][y+i].mod_type is None:
-                right += self.board.board[x][y+i].cur_letter
+            while y + t + i - 1 < 16 and self.board.board[x][y + t + i - 1].cur_letter != Utils.gap_filler and self.board.board[x][y + t + i - 1].mod_type is None:
+                right += self.board.board[x][y + t + i - 1].cur_letter
                 i += 1
             temp = (left + word + right).lower()
             if temp.lower() in self._dict:
