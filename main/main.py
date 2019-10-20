@@ -241,6 +241,13 @@ class Scrabble:
             print("Ход игрока", self.player_list[self.turn].name)
             print("Буквы " + self.player_list[self.turn].name + ":")
             print(*self.player_list[self.turn].letters, sep=Utils.let_sep)
+            # выведем стоимость буквы под ними
+            for i in range(len(self.player_list[self.turn].letters)):
+                if i != len(self.player_list[self.turn].letters) - 1:
+                    print(Utils.let_to_price[self.player_list[self.turn].letters[i]], end=Utils.let_sep)
+                else:
+                    print(Utils.let_to_price[self.player_list[self.turn].letters[i]])
+
             self._make_turn()
             if self.game_over():
                 playing = False
@@ -261,8 +268,8 @@ class Scrabble:
         else:
             print("ПОБЕДА ", self.player_list[0].name)
 
-        print("Количество очков победителя: ", self.player_list[0].score)
+        print("Количество очков победителя:", self.player_list[0].score)
         for i in range(eq_score, len(self.player_list)):
-            print(self.player_list[i].name, ': ', self.player_list[i].score)
+            print(self.player_list[i].name, ':', self.player_list[i].score)
 
 game = Scrabble()
