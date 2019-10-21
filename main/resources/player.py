@@ -20,7 +20,8 @@ class Player:
         """Проверяет, есть ли необходимые буквы у игрока"""
         user_let = list(self.letters)  # копируем список букв
         given_let = list(letters)
-        has_empty = ' ' in user_let
+        needed_letters = list()  # список, нужный для букв, заменяемых пустышками
+        empty = user_let.count(' ')  # подсчет количества пустышек
         length = len(given_let)  # запомним количество букв в изначальном слове
         let_count = 0
         for i in range(length):
@@ -29,20 +30,24 @@ class Player:
                 user_let.remove(ch)
                 let_count += 1  # выкидываем по одной из скопированных букв пользователя и увеличиваем счетчик
             else:
-                needed_letter = ch  # сохраним для случая, если не хватит 1 буквы
+                needed_letters.append(ch)  # сохраним для случая, если не хватит 1 буквы
 
-        if has_empty and length - let_count == 1:  # если разница в 1 букву и пользователя есть пустая ячейка спросим,
-            # использовать ли ее, иначе вернем False
+        if empty != 0 and empty == length - let_count:  # если разница имеющихся букв и количетсво пустышек равны спросим,
+            # использовать ли их, иначе вернем False
             ans = "э"
             while ans != "да" and ans != "нет":
-                ans = input("Вам не хватает 1 буквы, хотите использовать пустую фишку?(да/нет)")
+                if empty == 1:
+                    ans = input(f"Вам не хватает {empty} буквы, хотите использовать пустую фишку?(да/нет)")
+                else:
+                    ans = input(f"Вам не хватает {empty} букв, хотите использовать пустые фишки?(да/нет)")
                 ans = ans.lower()
 
             if ans == "нет":
                 return False
             else:
-                self.letters.remove(' ')
-                self.letters.append(needed_letter)  # удалим пустышку и добавим нужную букву
+                for letter in needed_letters:
+                    self.letters.remove(' ')
+                    self.letters.append(letter)  # удалим пустышку и добавим нужную букву
         elif length != let_count:
             return False
 

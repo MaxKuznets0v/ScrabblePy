@@ -18,9 +18,12 @@ class Cell:
 
     def set_letter(self, letter):  # изменяет букву в ячейке и возвращает количество очков за эту букву
         """Помещает букву в ячейку"""
-        self.cur_letter = letter
-        res = self.let_to_price[letter]
+        self.cur_letter = letter[0]  # берем первый элемент буквы(может быть больше одного элемента из-за пустышки)
+        if len(letter) > 1:  # длина буквы будет больше 1 если была метка '-'
+            res = self.let_to_price[' ']
+        else:
+            res = self.let_to_price[letter]
         if self.mod_type == "letter":
             res *= self.modifier
-        self.make_none()
+            self.make_none()
         return res

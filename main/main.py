@@ -4,6 +4,7 @@ import random
 from resources import Utils
 import os
 
+
 class Scrabble:
     """Основной игровой класс"""
 
@@ -32,7 +33,10 @@ class Scrabble:
             try:
                 inp = input("Ваш ход:")
                 inp_expr = list(inp.split())
-                if inp.lower() == "правила":  # выводит правила по необходимости
+                if inp.lower() == "выход":
+                    self.playing = False
+                    break
+                elif inp.lower() == "правила":  # выводит правила по необходимости
                     self.show_rules()
                     continue
                 elif inp_expr[0].lower() == "пас":  # пропуск хода
@@ -71,6 +75,7 @@ class Scrabble:
         self._set_bag()
         self._create_players()
         self._set_dict()
+        self.playing = True
         self.main()
 
     def exchange(self, ex_let):
@@ -116,15 +121,14 @@ class Scrabble:
                 return False
         return True
 
-    def show_rules(self):  # TODO: правила
+    def show_rules(self):
         print("Правила:")
-        print("Здесь можно расписать правила")
         print("Каждый ход совершается в следующем формате(без кавычек):\n'слово число(1-15) буквы(А-О) режим вставки(в/г)'")
         print("Здесь в - вертикальная вставка сверху вниз, г - гороизонтальная справа налево, буквы А-О, без Ё")
         print("Для пропуска хода введите: 'пас' и далее через пробел, отбрасывемые буквы(для пропуска хода без сброса букв")
         print("пишите 'пас' без последующих букв), пустышка обозначается '_'")
 
-    def check_word(self, inp):  # TODO: параллельный ввод
+    def check_word(self, inp):
         # проверяет на формат: (слово, x, буква, способ выкладки) пример: "сосна 11 О u" иначе бросить исключение
         # TypeError само слово на корректность (есть ли слово в словаре, не выезжает ли оно за границы,
         # есть ли нужные буквы для этого слова у пользователя, пересекает ли оно необходимые буквы и тд,
@@ -266,11 +270,11 @@ class Scrabble:
         return let_of_word  # возвращаем буквы которые нужно удалять из руки игрока
 
     def set_word(self, inp):  # вставляет слово вызывает (вызывает функцию проверки и тд) и возвращает стоимость слова
-        # inp - строка, поданная на вход из консоли в формате "word x y u/h", где x и y - координаты начала слова,
-        # а u/h - способ выкладки слово(вертикально или горизонтально) посмотрел на доску у своей scrabble,
-        # там нумерация ячеек как в морском бое: цифры и буквы и начало координат в левом верхнем углу,
-        # предлагаю сделать так же
+        # inp - строка, поданная на вход из консоли в формате "word x y г/в", где x и y - координаты начала слова,
+        # а г/в - способ выкладки слово(вертикально или горизонтально)
         """Помещает слово на игровое поле"""
+        before_empty = list(self.player_list[self.turn].letters)  # список букв игрока до проверки(может изменится, если
+        # игрок будет использовать пустышки)
         deleting = self.check_word(inp)
         word, x, let, way = inp.split()  # слово, координаты, способ выкладки
         x = int(x)
@@ -283,8 +287,11 @@ class Scrabble:
             index = x
             for letter in word:
                 if letter in deleting:
-                    self.player_list[self.turn].letters.remove(letter)  # удаляем буквы из руки игрока
-                    deleting.remove(letter)
+                    if letter not in before_empty:  # если добавили какие-то из-за пустышек
+                        letter = letter + '-'  # ставим метку добавленной букве
+                    self.player_list[self.turn].letters.remove(letter[0])  # удаляем буквы из руки игрока
+                    deleting.remove(letter[0])
+
                 cell = self.board.board[index][y]
                 if cell.mod_type == 'word':
                     modifier *= cell.modifier
@@ -296,8 +303,11 @@ class Scrabble:
             index = y
             for letter in word:
                 if letter in deleting:
-                    self.player_list[self.turn].letters.remove(letter)  # удаляем буквы из руки игрока
-                    deleting.remove(letter)
+                    if letter not in before_empty:  # если добавили какие-то из-за пустышек
+                        letter = letter + '-'  # ставим метку добавленной букве
+                    self.player_list[self.turn].letters.remove(letter[0])  # удаляем буквы из руки игрока
+                    deleting.remove(letter[0])
+
                 cell = self.board.board[x][index]
                 if cell.mod_type == 'word':
                     modifier *= cell.modifier
@@ -308,9 +318,8 @@ class Scrabble:
         return modifier * count
 
     def main(self):
-        playing = True
         self.show_rules()
-        while playing:
+        while self.playing:
             self.board.print_board()
             print("Ход игрока", self.player_list[self.turn].name)
             print("Буквы " + self.player_list[self.turn].name + ":")
@@ -324,7 +333,7 @@ class Scrabble:
 
             self._make_turn()
             if self.game_over():
-                playing = False
+                self.playing = False
 
         print("\n")
         self.player_list.sort(key=self._score, reverse=True)
@@ -345,5 +354,6 @@ class Scrabble:
         print("Количество очков победителя:", self.player_list[0].score)
         for i in range(eq_score, len(self.player_list)):
             print(self.player_list[i].name, ':', self.player_list[i].score)
+
 
 game = Scrabble()
