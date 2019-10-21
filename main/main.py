@@ -255,7 +255,7 @@ class Scrabble:
                         new_word = self.board.board[x-i][y+j].cur_letter + new_word
                         i += 1
                     i = 1
-                    while x + i < 16 and self.board.board[x+i][y+j].cur_letter != Utils.gap_filler and self.board.board[x+i][y+j] is None:
+                    while x + i < 16 and self.board.board[x+i][y+j].cur_letter != Utils.gap_filler and self.board.board[x+i][y+j].mod_type is None:
                         new_word = new_word + self.board.board[x+i][y+j].cur_letter
                         i += 1
                     if not (new_word.lower() in self._dict) and new_word != word[j]:
@@ -284,6 +284,7 @@ class Scrabble:
             for letter in word:
                 if letter in deleting:
                     self.player_list[self.turn].letters.remove(letter)  # удаляем буквы из руки игрока
+                    deleting.remove(letter)
                 cell = self.board.board[index][y]
                 if cell.mod_type == 'word':
                     modifier *= cell.modifier
@@ -296,6 +297,7 @@ class Scrabble:
             for letter in word:
                 if letter in deleting:
                     self.player_list[self.turn].letters.remove(letter)  # удаляем буквы из руки игрока
+                    deleting.remove(letter)
                 cell = self.board.board[x][index]
                 if cell.mod_type == 'word':
                     modifier *= cell.modifier
