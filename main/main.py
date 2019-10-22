@@ -45,6 +45,9 @@ class Scrabble:
                     self.player_list[self.turn].passes += 1  # увеличиваем счетчик пропусков
                     self._next_turn()
                     break
+                elif inp.lower() == "счет":
+                    for i in self.player_list:
+                        print(f"Очки игрока {i.name}: {i.score}")
                 self.player_list[self.turn].score += self.set_word(inp)
                 self.take_letters(self.player_list[self.turn])
                 for pl in self.player_list:
@@ -334,6 +337,7 @@ class Scrabble:
             self._make_turn()
             if self.game_over():
                 self.playing = False
+            os.system('cls')
 
         print("\n")
         self.player_list.sort(key=self._score, reverse=True)
