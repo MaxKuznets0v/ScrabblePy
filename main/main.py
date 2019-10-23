@@ -48,6 +48,7 @@ class Scrabble:
                 elif inp.lower() == "счет":
                     for i in self.player_list:
                         print(f"Очки игрока {i.name}: {i.score}")
+                    continue
                 self.player_list[self.turn].score += self.set_word(inp)
                 self.take_letters(self.player_list[self.turn])
                 for pl in self.player_list:
